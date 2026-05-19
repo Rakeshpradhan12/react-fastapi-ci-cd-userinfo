@@ -1,0 +1,17 @@
+Engine → connection factory (like opening a DB connection)
+Session → a working workspace / transaction
+Model (User) → table representation
+
+Think of a Session in SQLAlchemy as your conversation with the database.
+It’s not the database itself—it’s the bridge that lets your Python code:
+
+send queries
+track changes
+commit them as a transaction
+
+db = SessionLocal() // db is a sesssion object after connection
+means A Session is created, and it will acquire (borrow) a database connection from the engine only when needed.
+👉 SQLAlchemy:
+Creates a Session
+Internally borrows a connection from the engine
+Uses it when needed
