@@ -29,7 +29,12 @@ def home():
 
 @app.post('/users', response_model=schema.UserResponse)
 def create_user(emp:schema.UserCreate, db:Session=Depends(get_db)):
-  return crud.create_user(db, emp)
+  try:
+    return crud.create_user(db, emp)
+  except HTTPException:
+    raise
+  except Exception as e:
+    raise HTTPException(status_code=500, detail=f'Failed to create user: {str(e)}')
 
 
 @app.post('/token')
