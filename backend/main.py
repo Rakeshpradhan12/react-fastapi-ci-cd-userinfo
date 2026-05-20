@@ -6,6 +6,11 @@ from database import SessionLocal, engine, get_db
 from auth import authenticate_user, create_access_token
 from dependencies import get_current_user
 from fastapi.middleware.cors import CORSMiddleware
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -24,7 +29,7 @@ app.add_middleware(
 
 @app.get('/')
 def home():
-  return ('welcome to home page')
+  return ('welcome to home page guys')
 
 
 @app.post('/users', response_model=schema.UserResponse)
@@ -34,6 +39,7 @@ def create_user(emp:schema.UserCreate, db:Session=Depends(get_db)):
   except HTTPException:
     raise
   except Exception as e:
+    logger.error(f"Unexpected error in create_user: {str(e)}")
     raise HTTPException(status_code=500, detail=f'Failed to create user: {str(e)}')
 
 

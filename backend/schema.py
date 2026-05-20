@@ -15,9 +15,11 @@ class UserCreate(BaseModel):
   
   @field_validator('password')
   @classmethod
-  def password_must_be_strong(cls, v):
+  def password_must_be_valid(cls, v):
     if len(v) < 6:
       raise ValueError('Password must be at least 6 characters long')
+    if len(v) > 72:
+      raise ValueError('Password cannot be longer than 72 characters')
     return v
 
 class UserUpdate(BaseModel):
