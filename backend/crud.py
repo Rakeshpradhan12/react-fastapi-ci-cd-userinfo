@@ -1,14 +1,28 @@
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
+from fastapi import HTTPException
 import  models, schema
 from utils import get_hashed_password
 
 def create_user(db:Session , emp:schema.UserCreate):
+  # Check if user already exists
+  existing_user = db.query(models.Emp).filter(models.Emp.name == emp.name).first()
+  if existing_user:
+    raise HTTPException(status_code=400, detail='Username already exists')
+  
+  existing_email = db.query(models.Emp).filter(models.Emp.email == emp.email).first()
+  if existing_email:
+    raise HTTPException(status_code=400, detail='Email already exists')
 
   hashed_pwd = get_hashed_password(emp.password)
   db_user= models.Emp(name = emp.name, email=emp.email, password=hashed_pwd)
   db.add(db_user)
-  db.commit()
-  db.refresh(db_user)
+  try:
+    db.commit()
+    db.refresh(db_user)
+  except IntegrityError:
+    db.rollback()
+    raise HTTPException(status_code=500, detail='Failed to create user')
   return db_user
 
 
