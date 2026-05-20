@@ -27,8 +27,8 @@ def authenticate_user(username: str, password: str, db: Session):
     return emp
 
 
-SECRET_KEY='my_s'
-ALGORITHM='HS256'
+SECRET_KEY = os.getenv('SECRET_KEY', 'my_s')
+ALGORITHM = 'HS256'
 
 def create_access_token(data:dict):
   to_encode=data.copy()

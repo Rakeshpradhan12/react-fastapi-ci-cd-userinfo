@@ -3,10 +3,15 @@ from jose import jwt, JWTError
 from fastapi import Depends, HTTPException
 import crud
 from database import get_db
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 oauth2_scheme=OAuth2PasswordBearer(tokenUrl='/token')
 
-SECRET_KEY='my_s'
-ALGORITHM='HS256'
+SECRET_KEY = os.getenv('SECRET_KEY', 'my_s')
+ALGORITHM = 'HS256'
 def get_current_user(token:str=Depends(oauth2_scheme), db=Depends(get_db)):
   try:
     payload=jwt.decode(token , SECRET_KEY, algorithms=[ALGORITHM])
