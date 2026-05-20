@@ -11,19 +11,41 @@
 
 ### Validation Improvements
 - Email addresses are now validated using `EmailStr`
-- Password must be at least 6 characters
+- Password must be between 6-72 characters (bcrypt limit)
 - Name cannot be empty
+- Improved password hashing with proper byte handling
+
+### Bug Fixes
+- Fixed bcrypt 72-byte password limit handling
+- Added robust error handling for password hashing
+- Fixed typo in `verify_password` function parameter name
 
 ## Deployment Steps
 
 ### For Render.com or Production Deployment:
 
-1. **Update Dependencies**
+**IMPORTANT: You must redeploy your application for these fixes to take effect!**
+
+1. **Clear Existing Database** (Recommended if you have test data)
+   - On Render.com dashboard, go to your PostgreSQL database
+   - Delete and recreate the database, OR
+   - Run: `DROP TABLE emp;` to clear the table
+
+2. **Redeploy the Application**
+   - Push changes to your git repository
+   - Render will automatically redeploy
+   - OR manually trigger a deploy from Render dashboard
+
+3. **Verify Dependencies are Installed**
    ```bash
    pip install -r requirements.txt
    ```
 
-2. **Run Database Migration** (if you have existing data)
+### Alternative: Migrate Existing Data
+
+If you need to keep existing data:
+
+1. **Run Database Migration**
    ```bash
    python migrate_db.py
    ```
@@ -32,8 +54,7 @@
    - Add unique constraints
    - Fix NULL email values
 
-3. **Restart the Application**
-   - The application will automatically create tables with the new schema if starting fresh
+2. **Restart the Application**
 
 ### For Docker Deployment:
 

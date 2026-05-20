@@ -7,7 +7,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def create_user(db:Session , emp:schema.UserCreate):
+def create_user(db: Session, emp: schema.UserCreate):
   try:
     # Check if user already exists
     existing_user = db.query(models.Emp).filter(models.Emp.name == emp.name).first()
@@ -18,8 +18,13 @@ def create_user(db:Session , emp:schema.UserCreate):
     if existing_email:
       raise HTTPException(status_code=400, detail='Email already exists')
 
-    hashed_pwd = get_hashed_password(emp.password)
-    db_user= models.Emp(name = emp.name, email=emp.email, password=hashed_pwd)
+    # Hash the password
+    try:
+      hashed_pwd = get_hashed_password(emp.password)
+    except ValueError as e:
+      raise HTTPException(status_code=400, detail=str(e))
+    
+    db_user = models.Emp(name=emp.name, email=emp.email, password=hashed_pwd)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
