@@ -29,7 +29,7 @@ app.add_middleware(
 
 @app.get('/')
 def home():
-  return ('welcome to home page')
+  return ('welcome to home page guyes')
 
 
 @app.post('/users', response_model=schema.UserResponse)
